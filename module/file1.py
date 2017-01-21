@@ -84,22 +84,28 @@ def locate(string, x="/html/body/page/p[",y="]/text()"):     #for locating xpath
   #y="]/span/text()"
   
   i=0
-  while i<100000 :
+  while i<5000 :
     s=universal.tree.xpath(x+str(i)+y)
     #print(s)
     for a in s:
       if a.find(string)!=-1 :
         return x+str(i)+y
     i+=1
-  fappend=open("log.txt",'a')
-  fappend.write(universal.filename+"->"+string+'\n')
-  fappend.close()
+  if universal.flag==1:
+    fappend=open("log.txt",'a')
+    fappend.write(universal.filename+"->"+string+'\n')
+    fappend.close()
+  if string=="Application No.":
+    return "NULL"
   return  x+str(10)+y 
       
 def begin():      
   reopen(universal.filename+universal.filename+".html") #html-tag filename converted from pdf
   #page = requests_session.get('file:///home/killerbee/Desktop/test2/'+filename)   #file name
   #universal.tree = html.fromstring(page.content)
+  if locate("Application No.")=="NULL":
+    return -1;
+  
   universal.data["Application No."]=extract(locate("Application No."),"Application No.")
   universal.data["Date of filing of Application"]=extract(locate("Date of filing of Application :"),"Date of filing of Application :")
   universal.data["Publication Date"]=extract(locate("Publication Date : "),"Publication Date : ")
@@ -114,7 +120,8 @@ def begin():
   #except :
   #  raise
   #  temp=input("Error occured in extracting names from file "+filename+" of year "+year+"\n"+"press 1 to continue")
-  file2.extract_final_coloum()  
+  return (file2.extract_final_coloum()) 
+   
 ##  for z in universal.data :
 ##    print(z+":"+str(universal.data[z])+"\n")
 #  #convert.remove()  

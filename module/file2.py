@@ -27,6 +27,11 @@ def extract_final_coloum():
     i+=1  
     path=x+str(i)+y
     s=universal.tree.xpath(path)
+    if i>5000:
+      fappend=open("log.txt",'a')
+      fappend.write(universal.filename+"->"+"limit->function "+s+"\n")
+      fappend.close()
+      return -1
   cnt=0
   temp=""
   while cnt<10:
@@ -51,5 +56,6 @@ def extract_final_coloum():
     else:
       universal.data[target[i]]=temp[pj+1:]
       i+=1
-      break   
+      break
+  return 1      
 

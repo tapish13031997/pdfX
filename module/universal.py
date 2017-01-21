@@ -16,4 +16,6 @@ def init():
   global worksheet
   global date_format
   global row #row counter
+  global flag #Flag for process of extraction has started or not 
+  flag=0
 
