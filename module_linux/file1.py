@@ -11,7 +11,7 @@ import convert
 def reopen(filename):                           #open the html file for parasing
   requests_session = need.requests.session()
   requests_session.mount('file://', need.LocalFileAdapter())
-  page = requests_session.get('file:///home/killerbee/Desktop/test2/'+universal.tag_folder+"/"+filename)   #file name
+  page = requests_session.get('file://'+universal.current_dir+"/"+universal.tag_folder+"/"+filename)   #file name
   universal.tree = html.fromstring(page.content)
 
 

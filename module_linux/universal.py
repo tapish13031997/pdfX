@@ -1,5 +1,6 @@
 #file containing global variables
 import commands
+import os
 def init():
   global data
   data={}
@@ -7,7 +8,7 @@ def init():
   global filename #filename of pdf file containing patents
   filename="15"
   global current_dir 
-  current_dir=commands.getoutput("pwd") #In future use in-built python function which is platform independent.
+  current_dir=os.getcwd() #python function which is platform independent.
   global pdf_folder  #name of folder containing pdf burst files
   pdf_folder="3"
   global tag_folder #name of folder containing tag-html file
