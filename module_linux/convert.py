@@ -7,8 +7,6 @@ def run_command(string):
 def convert():
     #  run_command("pdf2txt.py -t html -Y exact "+"-o "+universal.filename+".html "+universal.current_dir+"/"+universal.year+"/"+universal.filename+".pdf")
   run_command("pdf2txt.py -t tag -Y exact "+"-o "+universal.current_dir+"/"+universal.tag_folder+"/"+universal.filename+universal.filename+".html "+universal.current_dir +"/"+ universal.pdf_folder+"/"+universal.filename+".pdf")
-def remove():
-  run_command("rm "+universal.current_dir+"/"+universal.tag_folder+"/"+universal.filename+universal.filename+".html")
 #universal.init();
 #for i in range(8,622):
 #  #print(i)

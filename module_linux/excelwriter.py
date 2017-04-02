@@ -56,8 +56,14 @@ def loop() :
   universal.worksheet.write(universal.row, 4, universal.data["Title of the invention"])
   universal.worksheet.write(universal.row, 5, universal.data["Name of Inventor"])
   universal.worksheet.write(universal.row, 6, universal.data["Abstract"])
-  universal.worksheet.write(universal.row, 7, universal.data["No. of Pages"])
-  universal.worksheet.write(universal.row, 8, universal.data["No. of Claims"])
+  if(universal.data["No. of Pages"]!="NA"):
+   universal.worksheet.write(universal.row, 7, int(universal.data["No. of Pages"]))
+  else:
+   universal.worksheet.write(universal.row, 7, universal.data["No. of Pages"]) 
+  if(universal.data["No. of Claims"]!="NA"):
+   universal.worksheet.write(universal.row, 8, int(universal.data["No. of Claims"]))
+  else:
+   universal.worksheet.write(universal.row, 8, universal.data["No. of Claims"]) 
   universal.worksheet.write(universal.row, 9, universal.data["International classification"])
   universal.worksheet.write(universal.row, 10, universal.data["Priority Document No"])
   if(universal.data["Priority Date"] == "NA"):
