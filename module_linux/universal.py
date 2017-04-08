@@ -1,9 +1,22 @@
 #file containing global variables
 import os
 def init():
+  global tag #records the name of the keys in data dictionary
+  tag=["Application No.","Date of filing of Application","Publication Date","Name of Applicant","Title of the invention","Name of Inventor","Abstract","No. of Pages","No. of Claims","International classification","Priority Document No","Priority Date","Name of priority country","International Publication No","International Application No","IAFiling Date","Patent of Addition to Application Number","IBFiling Date","Divisional to Application Number","ICFiling Date"]
+  global dbname
+  dbname = "patents"
+  global tablename
+  tablename = "patent_tables" 
+  global host
+  host = "localhost"
+  global user
+  user = "root"
+  global password
+  password = "1killer2"  
   global data
   data={}
   global tree
+  global con
 #  global test
 #  test=[]
   global datastring
@@ -22,6 +35,5 @@ def init():
   global row #row counter
   global flag #Flag for process of extraction has started or not 
   flag=0
-  global logfile
+  global logfile#filename is set to universal.logfile.txt
   logfile=""
-

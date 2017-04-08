@@ -3,7 +3,8 @@ import universal
 import commands
 import excelwriter
 import parser
-import logwriter 
+import logwriter
+import mysql 
 from PyPDF2 import PdfFileWriter, PdfFileReader
 def burstpdf(): 
   infile = PdfFileReader(open(universal.filename, 'rb'))
@@ -38,15 +39,18 @@ def initial():
     i+=1
     if parser.begin()!=-1:
       excelwriter.loop()
+      mysql.loop()
       break 
   universal.flag=1 #Process of extraction will start    
+  print (universal.con)
   while i<no_of_pages:
    universal.filename=str(i)
    convert.convert() #for initializing conversion of files
    if parser.begin()==-1:
     i+=1
-    continue
+    continue 
    excelwriter.loop() 
+   mysql.loop()
    i+=1
   universal.workbook.close()  
   run_command("rm -r "+universal.pdf_folder)
