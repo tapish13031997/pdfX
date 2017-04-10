@@ -1,9 +1,8 @@
 import xlsxwriter
 import universal
-import logwriter
-import re
+
 def init():       #for initializing the xlsx file
-  universal.workbook = xlsxwriter.Workbook(universal.filename+".xlsx")
+  universal.workbook = xlsxwriter.Workbook(universal.filename.replace(".pdf","")+".xlsx")
   universal.worksheet = universal.workbook.add_worksheet()
   headformat = universal.workbook.add_format()
   headformat.set_bold()
@@ -50,68 +49,46 @@ def init():       #for initializing the xlsx file
 
 #inside for loop
 def loop() :
-  try:
-    universal.worksheet.write(universal.row, 0, universal.data["Application No."].strip())
-    universal.worksheet.write(universal.row, 1, universal.data["Date of filing of Application"].strip(), universal.date_format)
-    universal.worksheet.write(universal.row, 2, universal.data["Publication Date"].strip(), universal.date_format)
-    universal.worksheet.write(universal.row, 3, universal.data["Name of Applicant"].strip())
-    universal.worksheet.write(universal.row, 4, universal.data["Title of the invention"].strip())
-    universal.worksheet.write(universal.row, 5, universal.data["Name of Inventor"].strip())
-    universal.worksheet.write(universal.row, 6, universal.data["Abstract"].strip())
-    universal.worksheet.write(universal.row, 7, int(universal.data["No. of Pages"].strip()))
-    universal.worksheet.write(universal.row, 8, int(universal.data["No. of Claims"].strip()))
-    universal.worksheet.write(universal.row, 9, universal.data["International classification"].strip())
-    universal.worksheet.write(universal.row, 10, universal.data["Priority Document No"].strip())
-    if(universal.data["Priority Date"].strip() == "NA"):
-        universal.worksheet.write(universal.row, 11, universal.data["Priority Date"].strip())
-    else:
-        universal.worksheet.write(universal.row, 11, universal.data["Priority Date"].strip(),universal.date_format)
-    universal.worksheet.write(universal.row, 12, universal.data["Name of priority country"].strip())
-    universal.worksheet.write(universal.row, 13, universal.data["International Application No"].strip())
-    if(universal.data["IAFiling Date"].strip() == "NA"):
-        universal.worksheet.write(universal.row, 14, universal.data["IAFiling Date"].strip())
-    else:
-        universal.worksheet.write(universal.row, 14, universal.data["IAFiling Date"].strip(),universal.date_format)
-    universal.worksheet.write(universal.row, 15, universal.data["International Publication No"].strip())
-    universal.worksheet.write(universal.row, 16, universal.data["Patent of Addition to Application Number"].strip())
-    if(universal.data["IBFiling Date"].strip() == "NA"):
-        universal.worksheet.write(universal.row, 17, universal.data["IBFiling Date"].strip())
-    else:
-        universal.worksheet.write(universal.row, 17, universal.data["IBFiling Date"].strip(),universal.date_format)
-    universal.worksheet.write(universal.row, 18, universal.data["Divisional to Application Number"].strip())
-    if(universal.data["ICFiling Date"].strip() == "NA"):
-        universal.worksheet.write(universal.row, 19, universal.data["ICFiling Date"].strip())
-    else:
-        universal.worksheet.write(universal.row, 19, universal.data["ICFiling Date"].strip(),universal.date_format)
-  except:
-      logwriter.logwrite("ERROR : Incorrect patent values")
+  universal.worksheet.write(universal.row, 0, universal.data["Application No."])
+  universal.worksheet.write(universal.row, 1, universal.data["Date of filing of Application"], universal.date_format)
+  universal.worksheet.write(universal.row, 2, universal.data["Publication Date"], universal.date_format)
+  universal.worksheet.write(universal.row, 3, universal.data["Name of Applicant"])
+  universal.worksheet.write(universal.row, 4, universal.data["Title of the invention"])
+  universal.worksheet.write(universal.row, 5, universal.data["Name of Inventor"])
+  universal.worksheet.write(universal.row, 6, universal.data["Abstract"])
+  if(universal.data["No. of Pages"].upper()!="NA"):
+   universal.worksheet.write(universal.row, 7, int(universal.data["No. of Pages"]))
+  else:
+   universal.worksheet.write(universal.row, 7, universal.data["No. of Pages"].upper()) 
+  if(universal.data["No. of Claims"].upper()!="NA"):
+   universal.worksheet.write(universal.row, 8, int(universal.data["No. of Claims"]))
+  else:
+   universal.worksheet.write(universal.row, 8, universal.data["No. of Claims"].upper()) 
+  universal.worksheet.write(universal.row, 9, universal.data["International classification"])
+  universal.worksheet.write(universal.row, 10, universal.data["Priority Document No"])
+  if(universal.data["Priority Date"] == "NA"):
+      universal.worksheet.write(universal.row, 11, universal.data["Priority Date"])
+  else:
+      universal.worksheet.write(universal.row, 11, universal.data["Priority Date"],universal.date_format)
+  universal.worksheet.write(universal.row, 12, universal.data["Name of priority country"])
+  universal.worksheet.write(universal.row, 13, universal.data["International Application No"])
+  if(universal.data["IAFiling Date"] == "NA"):
+      universal.worksheet.write(universal.row, 14, universal.data["IAFiling Date"])
+  else:
+      universal.worksheet.write(universal.row, 14, universal.data["IAFiling Date"],universal.date_format)
+  universal.worksheet.write(universal.row, 15, universal.data["International Publication No"])
+  universal.worksheet.write(universal.row, 16, universal.data["Patent of Addition to Application Number"])
+  if(universal.data["IBFiling Date"] == "NA"):
+      universal.worksheet.write(universal.row, 17, universal.data["IBFiling Date"])
+  else:
+      universal.worksheet.write(universal.row, 17, universal.data["IBFiling Date"],universal.date_format)
+  universal.worksheet.write(universal.row, 18, universal.data["Divisional to Application Number"])
+  if(universal.data["ICFiling Date"] == "NA"):
+      universal.worksheet.write(universal.row, 19, universal.data["ICFiling Date"])
+  else:
+      universal.worksheet.write(universal.row, 19, universal.data["ICFiling Date"],universal.date_format)
+
   universal.row = universal.row + 1
-  
-def checkpatentvalues() :
-  if((bool(re.search(r'^\d{12}\s[A-Z]$',universal.data["Application No."].strip()))|bool(re.search(r'\/[A-Z]{3}\/\d{4}\s[A-Z]$',universal.data["Application No."].strip())))==False):
-    return False;
-  if(bool(re.search(r'^\d{2}\/\d{2}\/\d{4}$',universal.data["Date of filing of Application"].strip()))==False):
-    return False;
-  if(bool(re.search(r'^\d{2}\/\d{2}\/\d{4}$',universal.data["Publication Date"].strip()))==False):
-    return False;
-  if(bool(re.search(r'^1\)',universal.data["Name of Applicant"].strip()))==False):
-    return False;
-  if(bool(re.search(r'\D',universal.data["No. of Pages"].strip()))==False):
-    return False;
-  if(bool(re.search(r'\D',universal.data["No. of Claims"].strip()))==False):
-    return False;
-  if((bool(re.search(r'^[A-Z]\d\d[A-Z]',universal.data["International classification"].strip()))|(universal.data["International classification"].strip()=="NA"))==False):
-    return False;
-  if((bool(re.search(r'^[A-Z]\d\d[A-Z]',universal.data["International classification"].strip()))|(universal.data["International classification"].strip()=="NA"))==False):
-    return False;
-  if((bool(re.search(r'^\d{2}\/\d{2}\/\d{4}$',universal.data["Priority Date"].strip()))|(universal.data["Priority Date"].strip()=="NA"))==False):
-    return False;
-  if((bool(re.search(r'^PCT\/',universal.data["International Application No"].strip()))|(universal.data["International Application No"].strip()=="NA"))==False):
-    return False;
-  if((bool(re.search(r'^\d{2}\/\d{2}\/\d{4}$',universal.data["IAFiling Date"].strip()))|(universal.data["IAFiling Date"].strip()=="NA"))==False):
-    return False;
-  if((bool(re.search(r'^[A-Z][A-Z]\s\d{4}',universal.data["International Publication No"].strip()))|(universal.data["International Publication No"].strip()=="NA"))==False):
-    return False;
-  return True;
+
 
 
