@@ -178,9 +178,9 @@ def getnoofpagesandclaims(words): #what if there is numberof claims in tag ,code
         if(bool(words[i].lower()=="no.")|bool(words[i].lower()=="number")|bool(words[i].lower()=="no")|bool(words[i].lower()=="no,")):
             if(words[i+1].lower()=="of"):
                 if(words[i+2].lower()=="pages"):
-                    pages = Pair(i,i+3)
+                    pages = Pair(i,i+2)
                 elif(words[i+2].lower()=="claims"):
-                    claims = Pair(i,i+3)
+                    claims = Pair(i,i+2)
     return Pair(pages,claims);                
 
 def extractvalues(words):
@@ -206,12 +206,13 @@ def extractvalues(words):
                   data[indexvalues[p].tag] = "NA"
               else :
                 data[indexvalues[p].tag] = "NA"
-              
+              flag[indexvalues[p].tag]=1
           p = p+1
       val = ' '.join(words[indexvalues[p].end+1:])
       if(len(val)>0 and val[0]==':'):
           val = val[1:]
       data[indexvalues[p].tag] = val.strip()
+      flag[indexvalues[p].tag] = 1
       if(flag[pages_tag]==0):
         data[pages_tag] = "NA"
       if(flag[claims_tag]==0):

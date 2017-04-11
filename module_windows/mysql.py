@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 import _mysql
 import universal
 import datetime
 import logwriter
+import unicodedata
 #init() function creates connection as soon as it starts and ends the same at the end.
 #for using loop() function first create a connection using createconnection and after putting all the data close the connection by executing closeconeection
 def createconnection():
@@ -41,8 +43,8 @@ def init():
                   "Title_of_Invention varchar(1000),"+
                   "Name_of_Inventor varchar(1500),"+
                   "Abstract varchar(3500),"+
-                  "No_of_Pages varchar(30),"+
-                  "No_of_Claims varchar(30),"+
+                  "No_of_Pages INT,"+
+                  "No_of_Claims INT,"+
                   "International_Classification varchar(50),"+
                   "Priority_Document_No varchar(50),"+
                   "Priority_date DATE,"+
@@ -60,6 +62,8 @@ def init():
         universal.logflag = 1
     finally:
         closeconnection()
+def is_ascii(s):
+    return all(ord(c)<128 for c in s)
 
 def loop():
     try:
@@ -69,6 +73,25 @@ def loop():
         transform("IAFiling Date")
         transform("IBFiling Date")
         transform("ICFiling Date")
+        if(universal.data["No. of Pages"]=="NA"):
+           universal.data["No. of Pages"]='0' 
+        if(universal.data["No. of Claims"]=="NA"):
+           universal.data["No. of Claims"]='0'
+        if(is_ascii(universal.data["Name of Applicant"])==False):
+            temp = universal.data["Name of Applicant"]
+            universal.data["Name of Applicant"]=unicodedata.normalize('NFKD',temp).encode('ascii','ignore')
+        if(is_ascii(universal.data["Title of the invention"])==False):
+            temp1 = universal.data["Title of the invention"] 
+            universal.data["Title of the invention"]=unicodedata.normalize('NFKD',temp1).encode('ascii','ignore')
+        if(is_ascii(universal.data["Name of Inventor"])==False):
+            temp2 = universal.data["Name of Inventor"]
+            universal.data["Name of Inventor"]=unicodedata.normalize('NFKD',temp2).encode('ascii','ignore')
+        if(is_ascii(universal.data["Abstract"])==False):
+            temp3=universal.data["Abstract"]
+            universal.data["Abstract"]=unicodedata.normalize('NFKD',temp3).encode('ascii','ignore')
+        if(is_ascii(universal.data["Name of priority country"])==False):
+            temp4=universal.data["Name of priority country"]
+            universal.data["Name of priority country"]=unicodedata.normalize('NFKD',temp4).encode('ascii','ignore') 
         q = ('insert into '+universal.tablename+' values("'+
             universal.data["Application No."]+'","'+
             universal.data["Date of filing of Application"]+'","'+
