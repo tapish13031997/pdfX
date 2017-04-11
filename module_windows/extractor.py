@@ -93,7 +93,7 @@ def matches(words, query):#returns list containing indexes of occurence of query
         word =  words[index]
         s = difflib.SequenceMatcher(None, word, query)
         match = ''.join(word[i:i+n] for i, j, n in s.get_matching_blocks() if n)
-        if float(len(match)) / float(len(query)) >= probability:
+        if (float(len(match)) / float(len(query)) + float(len(match)) / float(len(word)))/2  >= probability:
             arr.append(index)
         index = index+1
     return arr;
