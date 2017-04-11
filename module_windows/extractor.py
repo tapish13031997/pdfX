@@ -154,6 +154,12 @@ def formatabstract(val):
             new_val+=val[i]
     return new_val + "."
 
+def formatdate(string):
+    if(bool(string=='-')|bool(string==':')):
+        return "NA"
+    else:
+        return string
+
 def formatfilingno(val,tag): #must return NA if val is empty
     val = formatdocumentno(val)
     val = val.lower().replace(":",' ').replace("filing",' ').replace("date",' ').replace("filed",' ').replace("on",' ').replace("and",' ').replace("AND",' ').replace("&",' ').replace("And",' ').strip()
@@ -166,8 +172,9 @@ def formatfilingno(val,tag): #must return NA if val is empty
           data[tag+" Filing Date"] = "NA"
         else:
           if(bool(w[1]=='-')|bool(w[1]==':')|bool(w[1].lower()=='n.a.')|bool(w[1].lower()=='n,a.')|bool(w[1].lower()=='n.a,')|bool(w[1].lower()=='n,a,')|bool(w[1].lower()=='na')):
-            data[tag+" Filing Date"] = "NA"
-          data[tag+" Filing Date"] = w[1]
+              data[tag+" Filing Date"] = "NA"
+          else:
+              data[tag+" Filing Date"] = w[1]
     return w[0].upper();
 
 def getnoofpagesandclaims(words): #what if there is numberof claims in tag ,code will assign na while this value can be extracted
@@ -231,6 +238,9 @@ def extractvalues(words):
       data["(86) International Application"] = formatfilingno(data["(86) International Application"],"(86) International Application")
     #  if(flag["(57) Abstract"]!=1): 
       data["(57) Abstract"] = formatabstract(data["(57) Abstract"])
+      data["(32) Priority Date"] = formatdate(data["(32) Priority Date"])
+      data["(43) Publication Date"] = formatdate(data["(43) Publication Date"])
+      data["(22) Date filing Application"] = formatdate(data["(22) Date filing Application"])
       #data["(87) WIPO"]=formatdocumentno(data["(87) WIPO"])
       #if(data["(87) International Publication"]=="NA"):        #assuming WIPO=International publication
       data["(87) International Publication"]=formatdocumentno(data["(87) International Publication"])
@@ -320,8 +330,6 @@ def getdetails(new_patent):#new_patent must have spaces b/w consecutive words
                     tagindex+=1
                     continue;
                   (a,b)=locate(tag,words,0.85)
-                  logwriter.logwrite(tag+" locate function")
-                  universal.logflag = 1
                   if a!=-1:
                     i=searchtag(words,b)
                     #print(tag+" "+str(i))
