@@ -26,7 +26,6 @@ def transform(tag):
   s=s.lower()
   if(bool(s.find('a')!=-1)|bool(s.find('n')!=-1)):
     s="01/01/0001"
-  s=s.replace('.','/').replace('-','/')
   ss=datetime.datetime.strptime(s, f)
   universal.data[tag]=str(ss.year)+"/"+str(ss.month)+"/"+str(ss.day)
  # print(universal.data[tag])
@@ -116,5 +115,5 @@ def loop():
         universal.con.query(q)
         #print(q)
     except Exception as e:
-        logwriter.logwrite(str(e))
+        logwriter.logwrite("MySQL: "+str(e)+"  on page "+str(int(universal.filename)+1))
         universal.logflag = 1

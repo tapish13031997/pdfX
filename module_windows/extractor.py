@@ -154,11 +154,11 @@ def formatabstract(val):
             new_val+=val[i]
     return new_val + "."
 
-def formatdate(string):
-    if(bool(string=='-')|bool(string==':')):
+def formatdate(s):
+    if(bool(s=='-')|bool(s==':')|bool(s.lower()=='n.a.')|bool(s.lower()=='n,a.')|bool(s.lower()=='n.a,')|bool(s.lower()=='n,a,')|bool(s.lower()=='na')):
         return "NA"
     else:
-        return string
+        return (s.replace('.','/').replace('-','/'))
 
 def formatfilingno(val,tag): #must return NA if val is empty
     val = formatdocumentno(val)
@@ -171,11 +171,16 @@ def formatfilingno(val,tag): #must return NA if val is empty
         if(len(w)==1):
           data[tag+" Filing Date"] = "NA"
         else:
-          if(bool(w[1]=='-')|bool(w[1]==':')|bool(w[1].lower()=='n.a.')|bool(w[1].lower()=='n,a.')|bool(w[1].lower()=='n.a,')|bool(w[1].lower()=='n,a,')|bool(w[1].lower()=='na')):
-              data[tag+" Filing Date"] = "NA"
-          else:
-              data[tag+" Filing Date"] = w[1]
+          data[tag+" Filing Date"] = formatdate(w[1])
     return w[0].upper();
+
+def formatinvention(new_val):
+    if(new_val[0]=='"'):
+        new_val = new_val[1:]
+    n = len(new_val)-1
+    if(new_val[n]=='"'):
+        new_val = new_val[:n-1]
+    return new_val.strip()
 
 def getnoofpagesandclaims(words): #what if there is numberof claims in tag ,code will assign na while this value can be extracted
     i=0
@@ -256,7 +261,7 @@ def extractvalues(words):
      #if(flag["(71) Name Applicant"]!=1):
       universal.data["Name of Applicant"] = data["(71) Name Applicant"] +" Address of Applicant : "   + data["Address Applicant"]
      #if(flag["(54) Title invention"]!=1):
-      universal.data["Title of the invention"] = data["(54) Title invention"]
+      universal.data["Title of the invention"] = formatinvention(data["(54) Title invention"])
      #if(flag["(72) Name Inventor"]!=1):
       universal.data["Name of Inventor"] = data["(72) Name Inventor"]
      #if(flag["(57) Abstract"]!=1):
@@ -335,13 +340,13 @@ def getdetails(new_patent):#new_patent must have spaces b/w consecutive words
                     #print(tag+" "+str(i))
                     if(i==Pair(-1,-1)):
                       data[tag]="NA" #log writer
-                      logwriter.logwrite(tag+" not found")
+                      logwriter.logwrite(tag+" not found on page "+str(int(universal.filename)+1))
                       universal.logflag = 1
                       #print(tag)
                       flag[tag]=1
                   else :  
                    data[tag]="NA"  #log writer
-                   logwriter.logwrite(tag+" not found")
+                   logwriter.logwrite(tag+" not found on page "+str(int(universal.filename)+1))
                    universal.logflag = 1
                    #print(tag)
                    flag[tag]=1
