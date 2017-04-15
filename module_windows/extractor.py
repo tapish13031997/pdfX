@@ -11,7 +11,7 @@ pages_tag="No of Pages" #tags for pages and claims in whole file.
 claims_tag="No of Claims"#we are using No not No. so that we can match it with No, no, 
 Pair = namedtuple("Pair", ["start", "end"])
 Tag = namedtuple("Tag",["tag","start","end"])
-Tags=["(21) Application","Address Applicant","(22) Date filing Application","(19) India","(43) Publication Date","(54) Title invention","(51) International classification","(31) Priority Document","(32) Priority Date","(33) Name priority country","(86) International Application","(87) International Publication","(61) Patent Addition Application","(62) Divisional Application","(71) Name Applicant","(72) Name Inventor","(57) Abstract",pages_tag, claims_tag]
+Tags=["(21) Application","Address Applicant","(22) Date filing Application","(19) India","(43) Publication Date","(54) Title Invention","(51) International classification","(31) Priority Document","(32) Priority Date","(33) Name priority country","(86) International Application","(87) International Publication","(61) Patent Addition Application","(62) Divisional Application","(71) Name Applicant","(72) Name Inventor","(57) Abstract",pages_tag, claims_tag]
 indexvalues = []
 flag={}#flag[tag]=1 implies value to tag has been assigned used in line 194 main usage
 data = {}
@@ -148,38 +148,77 @@ def formatabstract(val):
     i=0
     new_val=""
     for i in range(0,len(val)-1):
+        if(val[i]=='"'):
+            continue;
         if(bool(val[i]==' ') & (bool(val[i+1]=='.') | bool(val[i+1]==','))):
             continue;
         else:
             new_val+=val[i]
     return new_val + "."
 
-def formatdate(s):
-    if(bool(s=='-')|bool(s==':')|bool(s.lower()=='n.a.')|bool(s.lower()=='n,a.')|bool(s.lower()=='n.a,')|bool(s.lower()=='n,a,')|bool(s.lower()=='na')):
+def formatval(s):
+    if(bool(s=='-')|bool(s==':')|bool(s.lower()=='n.a')|bool(s.lower()=='n,a')|bool(s.lower()=='n.a.')|bool(s.lower()=='n,a.')|bool(s.lower()=='n.a,')|bool(s.lower()=='n,a,')|bool(s.lower()=='na')|bool(s.lower()=="nil")):
         return "NA"
-    else:
-        return (s.replace('.','/').replace('-','/'))
+    return s.strip()
+
+def formatdate(s):
+    if(s=="NA"):
+        return s;
+    s = s.lower().replace(',',' ').replace('.','/').replace('-','/').replace('and',' ').replace('&',' ').replace(':',' ').strip()
+    Dates = s.split()
+    formateddates = ''
+    for Date in Dates:
+        arr = Date.split('/')
+        day = arr[0]
+        mon = arr[1]
+        year = arr[2]
+        if(len(day)==1):
+            day = "0" + day
+        if(len(mon)==1):
+            mon = "0" + mon
+        if(len(mon)==3):
+            mon = mon[0:2]
+        if(len(year)==2):
+            year = "20" + year
+        formateddates += day+"/"+mon+"/"+year + " "
+    return formateddates.strip()
 
 def formatfilingno(val,tag): #must return NA if val is empty
     val = formatdocumentno(val)
-    val = val.lower().replace(":",' ').replace("filing",' ').replace("date",' ').replace("filed",' ').replace("on",' ').replace("and",' ').replace("AND",' ').replace("&",' ').replace("And",' ').strip()
+    val = val.lower().replace(";"," ").replace(":",' ').replace("filing",' ').replace("date",' ').replace("filed",' ').replace("on",' ').replace("and",' ').replace("&",' ').strip()
     w = val.split()
-    if(len(w)==0):
-        data[tag+" Filing Date"] = "NA"
-        return "NA"
-    else:
-        if(len(w)==1):
-          data[tag+" Filing Date"] = "NA"
+    tagval=''
+    data[tag+" Filing Date"] = ''
+    for s in w:
+        s = formatval(s)
+        if(s=="NA"):
+            continue;
+        if(re.search(r'^\d{2,5}\/\d{2,5}\/\d{2,5}$',s)):
+            data[tag+" Filing Date"] += formatdate(s) + " "
         else:
-          data[tag+" Filing Date"] = formatdate(w[1])
-    return w[0].upper();
+            tagval+=s + " "
+    data[tag+" Filing Date"] = data[tag+" Filing Date"].strip()
+    if(len(data[tag+" Filing Date"])==0):
+        data[tag+" Filing Date"] = "NA"
+    if(len(tagval)==0):
+        return "NA"
+    return tagval.upper().strip()
+##    if(len(w)==0):
+##        data[tag+" Filing Date"] = "NA"
+##        return "NA"
+##    else:
+##        if(len(w)==1):
+##          data[tag+" Filing Date"] = "NA"
+##        else:
+##          data[tag+" Filing Date"] = formatdate((' '.join(w[1:])).strip())
+##    data[tag+" Filing Date"] = data[tag+" Filing Date"].strip()
+##    return w[0].upper();
 
-def formatinvention(new_val):
-    if(new_val[0]=='"'):
-        new_val = new_val[1:]
-    n = len(new_val)-1
-    if(new_val[n]=='"'):
-        new_val = new_val[:n-1]
+def formatstring(val):
+    new_val=''
+    for i in range (0,len(val)):
+        if(val[i]!='"'):
+            new_val += val[i]
     return new_val.strip()
 
 def getnoofpagesandclaims(words): #what if there is numberof claims in tag ,code will assign na while this value can be extracted
@@ -223,8 +262,12 @@ def extractvalues(words):
       val = ' '.join(words[indexvalues[p].end+1:])
       if(len(val)>0 and val[0]==':'):
           val = val[1:]
+      if(bool(val.lower().find("continued")!=-1)&bool(val.lower().find("to")!=-1)&bool(val.lower().find("part")!=-1)):
+          position = val.lower().find("continued")
+          val = val[:position]
       data[indexvalues[p].tag] = val.strip()
       flag[indexvalues[p].tag] = 1
+      
       if(flag[pages_tag]==0):
         data[pages_tag] = "NA"
       if(flag[claims_tag]==0):
@@ -241,6 +284,7 @@ def extractvalues(words):
       data["(62) Divisional Application"] = formatfilingno(data["(62) Divisional Application"],"(62) Divisional Application")
       #if(flag["(86) International Application"]!=1):
       data["(86) International Application"] = formatfilingno(data["(86) International Application"],"(86) International Application")
+      data["(54) Title Invention"] = formatstring(data["(54) Title Invention"])
     #  if(flag["(57) Abstract"]!=1): 
       data["(57) Abstract"] = formatabstract(data["(57) Abstract"])
       data["(32) Priority Date"] = formatdate(data["(32) Priority Date"])
@@ -259,9 +303,9 @@ def extractvalues(words):
      #if(flag["(43) Publication Date"]!=1):
       universal.data["Publication Date"] = data["(43) Publication Date"]
      #if(flag["(71) Name Applicant"]!=1):
-      universal.data["Name of Applicant"] = data["(71) Name Applicant"] +" Address of Applicant : "   + data["Address Applicant"]
+      universal.data["Name of Applicant"] = data["(71) Name Applicant"] +" Address of Applicant : "   + formatstring(data["Address Applicant"])
      #if(flag["(54) Title invention"]!=1):
-      universal.data["Title of the invention"] = formatinvention(data["(54) Title invention"])
+      universal.data["Title of the invention"] = data["(54) Title Invention"]
      #if(flag["(72) Name Inventor"]!=1):
       universal.data["Name of Inventor"] = data["(72) Name Inventor"]
      #if(flag["(57) Abstract"]!=1):
