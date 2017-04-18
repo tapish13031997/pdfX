@@ -48,7 +48,6 @@ def initial():
   while i<no_of_pages:    #loop for locating first patent file
     universal.filename=str(i);
     convert.convert() #for initializing conversion of files
-    print(1)
     
     i+=1
     if(Parser.begin()!=-1):
