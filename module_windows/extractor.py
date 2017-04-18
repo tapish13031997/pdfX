@@ -275,6 +275,8 @@ def extractvalues(words):
       if(flag[claims_tag]==0):
         data[claims_tag] = "NA"
     #if(flag["(21) Application"]!=1):
+      for tag in data:
+        data[tag] = formatval(data[tag])    
       data["(21) Application"] = formatdocumentno(data["(21) Application"])
       #if(flag["(31) Priority Document"]!=1):
       data["(31) Priority Document"] = formatdocumentno(data["(31) Priority Document"])
