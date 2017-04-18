@@ -50,7 +50,9 @@ def match(word,tag):
   return(float(float(sq)/float(max(len(word),len(tag)))))
 #this function locates expression with MINIMUM LENGTH ,similar to tag in fstring having probability atleast p0
 #no restriction on arguments passed can be with or without spaces (as the match function matches the string after modifng it) 
-def locate(tag,fstring,p0):  
+def locate(tag,fstring,p0):  #return null for Address of applicant
+  if(tag.find("Address")!=-1):
+      return (-1,"")
   tag=modify(tag)
   string=""
   for x in fstring: #for converting fstring(which can be a list ) into string

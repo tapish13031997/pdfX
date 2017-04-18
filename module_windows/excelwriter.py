@@ -1,6 +1,6 @@
 import xlsxwriter
 import universal
-
+import logwriter
 def init():       #for initializing the xlsx file
   universal.workbook = xlsxwriter.Workbook(universal.filename.replace(".pdf","")+".xlsx")
   universal.worksheet = universal.workbook.add_worksheet()
@@ -49,6 +49,7 @@ def init():       #for initializing the xlsx file
 
 #inside for loop
 def loop() :
+ try:
   universal.worksheet.write(universal.row, 0, universal.data["Application No."])
   universal.worksheet.write(universal.row, 1, universal.data["Date of filing of Application"], universal.date_format)
   universal.worksheet.write(universal.row, 2, universal.data["Publication Date"], universal.date_format)
@@ -89,6 +90,7 @@ def loop() :
       universal.worksheet.write(universal.row, 19, universal.data["ICFiling Date"],universal.date_format)
 
   universal.row = universal.row + 1
-
+ except Exception as e:
+   logwriter.logwrite("Excelfile : "+str(e)+" on page "+universal.filename)
 
 

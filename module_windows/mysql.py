@@ -50,7 +50,7 @@ def init():
                   "No_of_Claims INT,"+
                   "International_Classification varchar(100),"+
                   "Priority_Document_No varchar(70),"+
-                  "Priority_date DATE,"+
+                  "Priority_date varchar(100),"+
                   "Name_of_Priority_country varchar(70),"+
                   "International_Publication_No varchar(70),"+
                   "International_Application_No varchar(70),"+
@@ -80,7 +80,7 @@ def loop():
                 universal.data[tag] = transformunicode(universal.data[tag])
         transform("Date of filing of Application")
         transform("Publication Date")
-        transform("Priority Date")
+        #transform("Priority Date")
         transform("IAFiling Date")
         transform("IBFiling Date")
         transform("ICFiling Date")
