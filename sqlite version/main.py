@@ -4,7 +4,7 @@ import commands
 import excelwriter
 import Parser
 import logwriter
-import sqlitewriter 
+import sqlitewriter
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import os
 import shutil
