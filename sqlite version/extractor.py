@@ -275,7 +275,7 @@ def extractvalues(words):
       if(flag[claims_tag]==0):
         data[claims_tag] = "NA"
       for tag in data:
-        data[tag] = formatval(data[tag])
+          data[tag] = formatval(data[tag])
     #if(flag["(21) Application"]!=1):
       data["(21) Application"] = formatdocumentno(data["(21) Application"])
       #if(flag["(31) Priority Document"]!=1):
@@ -307,11 +307,11 @@ def extractvalues(words):
      #if(flag["(43) Publication Date"]!=1):
       universal.data["Publication Date"] = data["(43) Publication Date"]
      #if(flag["(71) Name Applicant"]!=1):
-      universal.data["Name of Applicant"] = data["(71) Name Applicant"] +" Address of Applicant : "   + formatstring(data["Address Applicant"])
+      universal.data["Name of Applicant"] = formatstring(data["(71) Name Applicant"]) +" Address of Applicant : "   + formatstring(data["Address Applicant"])
      #if(flag["(54) Title invention"]!=1):
       universal.data["Title of the invention"] = data["(54) Title Invention"]
      #if(flag["(72) Name Inventor"]!=1):
-      universal.data["Name of Inventor"] = data["(72) Name Inventor"]
+      universal.data["Name of Inventor"] = formatstring(data["(72) Name Inventor"])
      #if(flag["(57) Abstract"]!=1):
       universal.data["Abstract"] = data["(57) Abstract"]
      #if(flag[pages_tag]!=1):
