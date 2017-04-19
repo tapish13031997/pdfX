@@ -307,7 +307,7 @@ def extractvalues(words):
      #if(flag["(43) Publication Date"]!=1):
       universal.data["Publication Date"] = data["(43) Publication Date"]
      #if(flag["(71) Name Applicant"]!=1):
-      universal.data["Name of Applicant"] = data["(71) Name Applicant"] +" Address of Applicant : "   + formatstring(data["Address Applicant"])
+      universal.data["Name of Applicant"] = formatstring(data["(71) Name Applicant"] ) +" Address of Applicant : "   + formatstring(data["Address Applicant"])
      #if(flag["(54) Title invention"]!=1):
       universal.data["Title of the invention"] = data["(54) Title Invention"]
      #if(flag["(72) Name Inventor"]!=1):
