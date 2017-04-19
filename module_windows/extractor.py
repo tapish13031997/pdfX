@@ -311,7 +311,7 @@ def extractvalues(words):
      #if(flag["(54) Title invention"]!=1):
       universal.data["Title of the invention"] = data["(54) Title Invention"]
      #if(flag["(72) Name Inventor"]!=1):
-      universal.data["Name of Inventor"] = data["(72) Name Inventor"]
+      universal.data["Name of Inventor"] = formatstring(data["(72) Name Inventor"])
      #if(flag["(57) Abstract"]!=1):
       universal.data["Abstract"] = data["(57) Abstract"]
      #if(flag[pages_tag]!=1):
