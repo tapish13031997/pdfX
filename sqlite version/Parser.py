@@ -37,7 +37,8 @@ def begin():      #return 1 if string is not present
   try:
     return(extractor.getdetails(universal.datastring))
   except Exception as e:
-    logwriter.logwrite("Extracter: "+str(e)+" on page "+str(int(universal.filename)+1)) 
+    logwriter.logwrite("Extracter: "+str(e)+" on page "+str(int(universal.filename)+1))
+    universal.logflag = 1
     return -1
   return 0
 #  write code for case when tayal returns -1 and you have to run your extraction function 
