@@ -1,12 +1,14 @@
 #confirm identity of WIPO number
 #implement sql
 #implement a method to find and convert patent files of all year one by one
+# -*- coding: utf-8 -*-
 import difflib
 from collections import namedtuple
 import operator
 import re
 import universal
 import logwriter
+import unicodedata
 pages_tag="No of Pages" #tags for pages and claims in whole file.
 claims_tag="No of Claims"#we are using No not No. so that we can match it with No, no, 
 Pair = namedtuple("Pair", ["start", "end"])
@@ -158,32 +160,36 @@ def formatabstract(val):
             new_val+=val[i]
     return new_val + "."
 
-def formatval(s):
-    if(bool(s=='-')|bool(s==':')|bool(s.lower()=='n.a')|bool(s.lower()=='n,a')|bool(s.lower()=='n.a.')|bool(s.lower()=='n,a.')|bool(s.lower()=='n.a,')|bool(s.lower()=='n,a,')|bool(s.lower()=='na')|bool(s.lower()=="nil")):
+def formatval(string):
+    s = string.lower()
+    if(bool(s=='-')|bool(s==':')|bool(s=='n.a')|bool(s=='n,a')|bool(s=='n.a.')|bool(s=='n/a')|bool(s=='a')|bool(s=='n,a.')|bool(s=='n.a,')|bool(s=='n,a,')|bool(s=='na')|bool(s=="nil")):
         return "NA"
-    return s.strip()
+    return string.strip()
 
 def formatdate(s):
-    if(s=="NA"):
-        return s;
-    s = s.lower().replace(',',' ').replace('.','/').replace('-','/').replace('and',' ').replace('&',' ').replace(':',' ').strip()
-    Dates = s.split()
-    formateddates = ''
-    for Date in Dates:
-        arr = Date.split('/')
-        day = arr[0]
-        mon = arr[1]
-        year = arr[2]
-        if(len(day)==1):
-            day = "0" + day
-        if(len(mon)==1):
-            mon = "0" + mon
-        if(len(mon)==3):
-            mon = mon[0:2]
-        if(len(year)==2):
-            year = "20" + year
-        formateddates += day+"/"+mon+"/"+year + " "
-    return formateddates.strip()
+    try:
+        if(s=="NA"):
+            return s;
+        s = s.lower().replace(',',' ').replace('.','/').replace('-','/').replace('and',' ').replace('&',' ').replace(':',' ').strip()
+        Dates = s.split()
+        formateddates = ''
+        for Date in Dates:
+            arr = Date.split('/')
+            day = arr[0]
+            mon = arr[1]
+            year = arr[2]
+            if(len(day)==1):
+                day = "0" + day
+            if(len(mon)==1):
+                mon = "0" + mon
+            if(len(mon)==3):
+                mon = mon[0:2]
+            if(len(year)==2):
+                year = "20" + year
+            formateddates += day+"/"+mon+"/"+year + " "
+        return formateddates.strip()
+    except:
+        return "NA"
 
 def formatfilingno(val,tag): #must return NA if val is empty
     val = formatdocumentno(val)
@@ -198,7 +204,7 @@ def formatfilingno(val,tag): #must return NA if val is empty
         if(re.search(r'^\d{2,5}\/\d{2,5}\/\d{2,5}$',s)):
             data[tag+" Filing Date"] += formatdate(s) + " "
         else:
-            tagval+=s + " "
+            tagval+=s + " " 
     data[tag+" Filing Date"] = data[tag+" Filing Date"].strip()
     if(len(data[tag+" Filing Date"])==0):
         data[tag+" Filing Date"] = "NA"
@@ -234,7 +240,15 @@ def getnoofpagesandclaims(words): #what if there is numberof claims in tag ,code
                     pages = Pair(i,i+2)
                 elif(words[i+2].lower()=="claims"):
                     claims = Pair(i,i+2)
-    return Pair(pages,claims);                
+    return Pair(pages,claims);
+
+def is_ascii(s):
+    return all(ord(c)<128 for c in s)
+
+def transformunicode(val):
+    temp = val
+    val = unicodedata.normalize('NFKD',temp).encode('ascii','ignore')
+    return val
 
 def extractvalues(words):
       indexvalues.sort(key=operator.itemgetter(1))  #sorts according to starting index
@@ -269,13 +283,16 @@ def extractvalues(words):
           val = val[:position]
       data[indexvalues[p].tag] = val.strip()
       flag[indexvalues[p].tag] = 1
-      
       if(flag[pages_tag]==0):
         data[pages_tag] = "NA"
       if(flag[claims_tag]==0):
         data[claims_tag] = "NA"
       for tag in data:
-          data[tag] = formatval(data[tag])
+        if(bool(data[tag]=="")|bool(data[tag]=="na")|bool(data[tag]=="n.a.")|bool(data[tag].lower()=="nil")):
+          data[tag]="NA"
+        if(is_ascii(data[tag])==False):
+          data[tag] = transformunicode(data[tag])
+        data[tag] = formatval(data[tag])
     #if(flag["(21) Application"]!=1):
       data["(21) Application"] = formatdocumentno(data["(21) Application"])
       #if(flag["(31) Priority Document"]!=1):
@@ -297,9 +314,6 @@ def extractvalues(words):
       #data["(87) WIPO"]=formatdocumentno(data["(87) WIPO"])
       #if(data["(87) International Publication"]=="NA"):        #assuming WIPO=International publication
       data["(87) International Publication"]=formatdocumentno(data["(87) International Publication"])
-      for tag in data:
-        if(bool(data[tag]=="")|bool(data[tag]=="na")|bool(data[tag]=="n.a.")|bool(data[tag].lower()=="nil")):
-          data[tag]="NA"
      #if(flag["(21) Application"]!=1):        
       universal.data["Application No."] = data["(21) Application"]
      #if(flag["(22) Date filing Application"]!=1):

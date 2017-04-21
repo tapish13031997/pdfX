@@ -33,11 +33,11 @@ def begin():      #return 1 if string is not present
   s = universal.tree.itertext()
 #  universal.test=["(21) Application No","Date of filing of Application","Publication Date","Title of the invention","International classification","Priority Document","Priority Date","Name of priority country","International Application","Fil","International Publication","Patent of Addition to Application","Fil","Divisional to Application","Fil","Name of Applicant","(72)Name of Inventor","Abstract"]
   for a in s:
-    universal.datastring = universal.datastring + a + " "
+    universal.datastring += a
   try:
     return(extractor.getdetails(universal.datastring))
   except Exception as e:
-    logwriter.logwrite(str(e)+" on page "+str(int(universal.filename)+1)) 
+    logwriter.logwrite("Extracter: "+str(e)+" on page "+str(int(universal.filename)+1)) 
     return -1
   return 0
 #  write code for case when tayal returns -1 and you have to run your extraction function 

@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 import sqlite3
 import universal
 import datetime
 import logwriter
-import unicodedata
 #init() function creates connection as soon as it starts and ends the same at the end.
 #for using loop() function first create a connection using createconnection and after putting all the data close the connection by executing closeconeection
 def createconnection():
@@ -63,19 +61,9 @@ def init():
         universal.logflag = 1
     finally:
         closeconnection()
-def is_ascii(s):
-    return all(ord(c)<128 for c in s)
-
-def transformunicode(val):
-    temp = val
-    val = unicodedata.normalize('NFKD',temp).encode('ascii','ignore')
-    return val
 
 def loop():
     try:
-        for tag in universal.data:
-            if(is_ascii(universal.data[tag])==False):
-                universal.data[tag] = transformunicode(universal.data[tag])
         transform("Date of filing of Application")
         transform("Publication Date")
         transform("Priority Date")
