@@ -28,21 +28,27 @@ def burstpdf():
 ##    return commands.getstatusoutput(string)[1]   
 def initial():
   #run_command("mkdir "+universal.pdf_folder)
-  os.mkdir(universal.pdf_folder)
-  #run_command("mkdir "+universal.tag_folder)
-  os.mkdir(universal.tag_folder)
+  try:
+   os.mkdir(universal.pdf_folder)
+   os.mkdir(universal.tag_folder)
+  except Exception as e:
+   shutil.rmtree(universal.pdf_folder)
+   shutil.rmtree(universal.tag_folder)
+   os.mkdir(universal.pdf_folder)
+   os.mkdir(universal.tag_folder)
   temp=universal.filename #assigning filename to temp
   no_of_pages=burstpdf()
-  logwriter.logwrite("\n********"+"\n"+temp+"\n*************\n")  
+  logwriter.logwrite("\n********"+"\n"+str(temp)+"\n*************\n")  
   if no_of_pages==0:
     logwriter.logwrite("No pages in this pdf\n")
-    logwriter.logwrite("********"+"\n"+temp+"\n*************\n")
+    logwriter.logwrite("********"+"\n"+str(temp)+"\n*************\n")
     return 0
   i=0  
   excelwriter.init()
   while i<no_of_pages:    #loop for locating first patent file
     universal.filename=str(i);
     convert.convert() #for initializing conversion of files
+    
     i+=1
     if(Parser.begin()!=-1):
       excelwriter.loop()

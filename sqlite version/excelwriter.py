@@ -91,7 +91,7 @@ def loop() :
 
   universal.row = universal.row + 1
  except Exception as e:
-   universal.logflag=1
+   universal.logfile=1
    logwriter.logwrite("Excelfile : "+str(e)+" on page "+universal.filename)
 
 

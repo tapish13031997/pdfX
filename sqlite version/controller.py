@@ -4,6 +4,7 @@ import browser
 import sqlitewriter
 from shutil import copyfile
 import os
+#import test
 universal.init()
 sqlitewriter.init()
 files=browser.browse()
@@ -22,9 +23,13 @@ for _file in files :
   sqlitewriter.createconnection()
   main.initial()
   sqlitewriter.closeconnection()
+  
   if(universal.logflag==0):
     os.remove(universal.logfile+".txt")
+#  else:
+#   test.init(tempfile)
   os.remove(tempfile)
+  os.remove(_file)
   #main.run_command("rm "+universal.logfile)
 #year=input("year\n")
 #s=main.run_command("ls "+str(year),1).split("\n")
