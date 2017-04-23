@@ -70,4 +70,4 @@ def initial():
   shutil.rmtree(universal.pdf_folder)
   #run_command("rm -r "+universal.tag_folder)
   shutil.rmtree(universal.tag_folder)
-  logwriter.logwrite("********"+"\n"+temp+"\n*************\n")
+  logwriter.logwrite("********"+"\n"+str(temp)+"\n*************\n")
