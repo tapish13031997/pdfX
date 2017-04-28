@@ -45,7 +45,7 @@ def init():
                   "No_of_Claims INT,"+
                   "International_Classification varchar(100),"+
                   "Priority_Document_No varchar(70),"+
-                  "Priority_date varchar(100),"+
+                  "Priority_date DATE,"+
                   "Name_of_Priority_country varchar(70),"+
                   "International_Publication_No varchar(70),"+
                   "International_Application_No varchar(70),"+
@@ -66,6 +66,7 @@ def loop():
     try:
         transform("Date of filing of Application")
         transform("Publication Date")
+        transform("Priority Date")
         transform("IAFiling Date")
         transform("IBFiling Date")
         transform("ICFiling Date")
@@ -115,3 +116,6 @@ def loop():
     except Exception as e:
         logwriter.logwrite("MySQL: "+str(e)+"  on page "+str(int(universal.filename)+1))
         universal.logflag = 1
+        Format = universal.workbook.add_format()
+        Format.set_font_color('red')
+        universal.worksheet.set_row(universal.row, None, Format)
