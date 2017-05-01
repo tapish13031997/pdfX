@@ -53,15 +53,20 @@ def match(word,tag):
 #this function locates expression with MINIMUM LENGTH ,similar to tag in fstring having probability atleast p0
 #no restriction on arguments passed can be with or without spaces (as the match function matches the string after modifng it) 
 def locate(tag,fstring,p0):  #return null for Address of applicant
-  if(tag.find("Address")!=-1):
-      return (-1,"")
+#  if(tag.find("Address")!=-1):
+#      return (-1,"")
 #  if(tag.find("International Application")!=-1):
 #      return (-1,"")
 #  return (-1,"")    
   tag=modify(tag)
   string=""
+  pos_space=[]
+  cnt=0
   for x in fstring: #for converting fstring(which can be a list ) into string
-    string+=x+" "
+    string+=x
+    pos_space.append(cnt+len(x))
+    cnt+=len(x)
+  string+=" "#inserting space as pos_space will also note the location for last word also  
   #print(tag+" "+string)  
   p=0.0
   start=0
@@ -83,10 +88,17 @@ def locate(tag,fstring,p0):  #return null for Address of applicant
             end=j 
         j+=1
       i+=1
-  #print(tag+" "+string[start:end+1]+" "+str(p))        
+  fans=""
+  for pos in pos_space:
+    if(bool(pos>=start)and bool(pos<=end)):
+      fans=fans+string[start:pos]+" "
+      start=pos
+#  print(string)    
+#  print(tag+" "+fans+" "+str(p))        
+#  print(pos_space)
   if (start==0 and end==0) or (p<p0):
    return (-1,"") 
-  return (p,string[start:end+1])     
+  return (p,fans)     
 #def locate_tags(string):
 #  string=''.join(string.split()) 
 #  string=string.lower()
@@ -165,7 +177,7 @@ def formatabstract(val):
 
 def formatval(string):
     s = string.lower()
-    if(bool(s=='-')|bool(s==':')|bool(s=='n.a')|bool(s=='n,a')|bool(s=='n.a.')|bool(s=='n/a')|bool(s=='a')|bool(s=='n,a.')|bool(s=='n.a,')|bool(s=='n,a,')|bool(s=='na')|bool(s=="nil")):
+    if(bool(s=='-')|bool(s==':')|bool(s=='n.a')|bool(s=='n,a')|bool(s=='n.a.')|bool(s=='n/a')|bool(s=='N/A')|bool(s=='a')|bool(s=='n,a.')|bool(s=='n.a,')|bool(s=='n,a,')|bool(s=='na')|bool(s=="nil")):
         return "NA"
     return string.strip()
 
@@ -406,7 +418,7 @@ def getdetails(new_patent):#new_patent must have spaces b/w consecutive words
                             indexvalues.append(Tag(tag,i.start,i.end))
                             tagindex+=1
                             continue
-                  (a,b)=locate(tag,words,0.85)
+                  (a,b)=locate(tag,words,0.80)
                   if a!=-1:
                     i=searchtag(words,b)
                     #print(tag+" "+str(i))
